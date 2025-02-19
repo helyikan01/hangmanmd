@@ -5,7 +5,7 @@ Projekt neve: **Akasztofa**
 
 Projekt leírása: Hozz létre egy 2x2-es Grid-et ahol az első cellában a szó a másodikban a gratuláció és rossz tippek a harmadikban az ábécé gombjai a negyedikben pedig a játék állapotot mutató kép található.
 
-Működés: Az Akasztófa játékban a felhasználó egy szó betűit próbálja kitalálni, és minden helytelen tipp után egy újabb részlet jelenik meg a "galgás" képen. A játék akkor ér véget, ha a felhasználó teljesen kitalálja a szót vagy elfogy a hibás próbálkozások száma.
+Működés: Az Akasztófa játékban a felhasználó egy szó betűit próbálja kitalálni, és minden helytelen tipp után egy újabb részlet jelenik meg a képen. A játék akkor ér véget, ha a felhasználó teljesen kitalálja a szót vagy elfogy a hibás próbálkozások száma.
 
 1. Hozz létre egy 2x2-es Grid-et: A Grid-ben két oszlopot és két sort definiálsz. Az első oszlop tartalmazza a szó megjelenítését és az ábécé gombjait, míg a második oszlopban a gratulációkat és a hibás tippek számát, valamint a galgás képet helyezed el.
 2. Szó megjelenítése: Az első sor első cellájában egy TextBlock van, amely a WordDisplay néven jeleníti meg a kitalálandó szó betűit.
