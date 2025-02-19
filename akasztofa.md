@@ -1,4 +1,4 @@
-ú#  Grid: Akasztofa
+#  Grid: Akasztofa
 
 ## Feladat : 
 Projekt neve: **Akasztofa**
