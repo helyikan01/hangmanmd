@@ -11,7 +11,7 @@ Működés: Az Akasztófa játékban a felhasználó egy szó betűit próbálja
 2. Szó megjelenítése: Az első sor első cellájában egy TextBlock van, amely a WordDisplay néven jeleníti meg a kitalálandó szó betűit.
 3. Ábécé gombok hozzáadása: Az első sor második cellájában egy ScrollViewer és egy WrapPanel található, amiben az összes betű (A-Z, ékezetekkel) gombként szerepel. Ezek a gombok kattintáskor elindítanak egy eseményt, amely a betűk tippelését kezeli.
 4. Gratuláció és hibás tippek száma: A második sor első cellájában egy StackPanel található, amiben két TextBlock jeleníti meg a gratuláció szöveget és a hibás tippek számát.
-5. Kép a hangman: A második sor második cellájában egy Image található, amely az aktuális hibás tippek számának megfelelő galgás képet jeleníti meg. A képek a hangman0.png-től a hangman10.png-ig terjednek, és a hibás próbálkozások számától függően változnak.
+5. Kép a hangman-ről: A második sor második cellájában egy Image található, amely az aktuális hibás tippek számának megfelelő képet jeleníti meg. A képek a hangman0.png-től a hangman10.png-ig terjednek, és a hibás próbálkozások számától függően változnak.
 
 ```c#
 
