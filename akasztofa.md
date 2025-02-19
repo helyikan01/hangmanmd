@@ -101,13 +101,13 @@ private void LoadWordsFromFile()
         else
         {
             MessageBox.Show("A szavak nem találhatóak");
-            this.Close();
+            Close();
         }
     }
     catch (Exception ex)
     {
-        MessageBox.Show($"Hiba van {ex.Message}");
-        this.Close();
+        MessageBox.Show($"Hiba van: {ex.Message}");
+        Close();
     }
 }
 
@@ -141,31 +141,30 @@ private void StartNewGame()
 
 ```c#
 
-private void LetterButton_Click(object sender, RoutedEventArgs e)
-{
-    Button button = (Button)sender;
-    char guessedChar = button.Content.ToString().ToLower()[0];
-    button.IsEnabled = false;
-
-    if (selectedWord.Contains(guessedChar))
-    {
-        for (int i = 0; i < selectedWord.Length; i++)
-        {
-            if (selectedWord[i] == guessedChar)
-            {
-                guessedLetters[i] = guessedChar;
-            }
-        }
-    }
-    else
-    {
-        incorrectGuesses++;
-        WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
-        UpdateHangmanImage();
-    }
-    UpdateDisplay();
-    CheckGameStatus();
-}
+ private void LetterButton_Click(object sender, RoutedEventArgs e)
+ {
+     Button button = (Button)sender;
+     char guessedChar = button.Content.ToString().ToLower()[0];
+     button.IsEnabled = false;
+     if (selectedWord.Contains(guessedChar))
+     {
+         for (int i = 0; i < selectedWord.Length; i++)
+         {
+             if (selectedWord[i] == guessedChar)
+             {
+                 guessedLetters[i] = guessedChar;
+             }
+         }
+     }
+     else
+     {
+         incorrectGuesses++;
+         WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
+         UpdateHangmanImage();
+     }
+     UpdateDisplay();
+     CheckGameStatus();
+ }
 
 ```
 
@@ -177,7 +176,7 @@ private void CheckGameStatus()
 {
     if (guessedLetters.SequenceEqual(selectedWord.ToCharArray()))
     {
-        CongratsText.Text = "Gratulálok nyertél!";
+        CongratsText.Text = "Gratulálok, nyertél!";
         DisableAllLetterButtons();
     }
     else if (incorrectGuesses >= maxAttempts)
@@ -197,11 +196,10 @@ private void CheckGameStatus()
 
 private void UpdateHangmanImage()
 {
-    string imagePath = $"Images/hangman{incorrectGuesses}.png";
-
+    string imagePath = Path.Combine(imageFolderPath, $"hangman{Math.Min(incorrectGuesses, 10)}.png");
     if (File.Exists(imagePath))
     {
-        HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath, UriKind.Relative));
+        HangmanImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
     }
     else
     {
@@ -216,12 +214,12 @@ private void UpdateHangmanImage()
 ```c#
 
  private void EnableAllLetterButtons()
- {
-     foreach (var button in AlphabetPanel.Children.OfType<Button>())
-     {
-         button.IsEnabled = true;
-     }
- }
+{
+    foreach (var button in AlphabetPanel.Children.OfType<Button>())
+    {
+        button.IsEnabled = true;
+    }
+}
 
 ```
 
@@ -235,6 +233,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Akasztofa
 {
@@ -244,8 +243,8 @@ namespace Akasztofa
         private string selectedWord;
         private char[] guessedLetters;
         private int incorrectGuesses;
-        private const int maxAttempts = 11;
-
+        private const int maxAttempts = 10;
+        private readonly string imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
         public MainWindow()
         {
             InitializeComponent();
@@ -264,13 +263,13 @@ namespace Akasztofa
                 else
                 {
                     MessageBox.Show("A szavak nem találhatóak");
-                    this.Close();
+                    Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Hiba van {ex.Message}");
-                this.Close();
+                MessageBox.Show($"Hiba van: {ex.Message}");
+                Close();
             }
         }
         private void StartNewGame()
@@ -296,11 +295,10 @@ namespace Akasztofa
         }
         private void UpdateHangmanImage()
         {
-            string imagePath = $"Images/hangman{incorrectGuesses}.png";
-
+            string imagePath = Path.Combine(imageFolderPath, $"hangman{Math.Min(incorrectGuesses, 10)}.png");
             if (File.Exists(imagePath))
             {
-                HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath, UriKind.Relative));
+                HangmanImage.Source = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
             }
             else
             {
@@ -319,7 +317,6 @@ namespace Akasztofa
             Button button = (Button)sender;
             char guessedChar = button.Content.ToString().ToLower()[0];
             button.IsEnabled = false;
-
             if (selectedWord.Contains(guessedChar))
             {
                 for (int i = 0; i < selectedWord.Length; i++)
@@ -343,7 +340,7 @@ namespace Akasztofa
         {
             if (guessedLetters.SequenceEqual(selectedWord.ToCharArray()))
             {
-                CongratsText.Text = "Gratulálok nyertél!";
+                CongratsText.Text = "Gratulálok, nyertél!";
                 DisableAllLetterButtons();
             }
             else if (incorrectGuesses >= maxAttempts)
@@ -352,6 +349,7 @@ namespace Akasztofa
                 DisableAllLetterButtons();
             }
         }
+
         private void DisableAllLetterButtons()
         {
             foreach (var button in AlphabetPanel.Children.OfType<Button>())
