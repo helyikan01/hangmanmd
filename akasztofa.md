@@ -1,4 +1,4 @@
-#  Grid: Akasztofa
+ú#  Grid: Akasztofa
 
 ## Feladat : 
 Projekt neve: **Akasztofa**
@@ -7,11 +7,11 @@ Projekt leírása: Hozz létre egy 2x2-es Grid-et ahol az első cellában a szó
 
 Működés: Az Akasztófa játékban a felhasználó egy szó betűit próbálja kitalálni, és minden helytelen tipp után egy újabb részlet jelenik meg a képen. A játék akkor ér véget, ha a felhasználó teljesen kitalálja a szót vagy elfogy a hibás próbálkozások száma.
 
-1. Hozz létre egy 2x2-es Grid-et: A Grid-ben két oszlopot és két sort definiálsz. Az első oszlop tartalmazza a szó megjelenítését és az ábécé gombjait, míg a második oszlopban a gratulációkat és a hibás tippek számát, valamint a galgás képet helyezed el.
+1. Hozz létre egy 2x2-es Grid-et: A Grid-ben két oszlopot és két sort definiálsz. Az első oszlop tartalmazza a szó megjelenítését és az ábécé gombjait, míg a második oszlopban a gratulációkat és a hibás tippek számát, valamint a hangman képet helyezed el.
 2. Szó megjelenítése: Az első sor első cellájában egy TextBlock van, amely a WordDisplay néven jeleníti meg a kitalálandó szó betűit.
 3. Ábécé gombok hozzáadása: Az első sor második cellájában egy ScrollViewer és egy WrapPanel található, amiben az összes betű (A-Z, ékezetekkel) gombként szerepel. Ezek a gombok kattintáskor elindítanak egy eseményt, amely a betűk tippelését kezeli.
 4. Gratuláció és hibás tippek száma: A második sor első cellájában egy StackPanel található, amiben két TextBlock jeleníti meg a gratuláció szöveget és a hibás tippek számát.
-5. Kép a galgáról: A második sor második cellájában egy Image található, amely az aktuális hibás tippek számának megfelelő galgás képet jeleníti meg. A képek a hangman0.png-től a hangman10.png-ig terjednek, és a hibás próbálkozások számától függően változnak.
+5. Kép a hangman: A második sor második cellájában egy Image található, amely az aktuális hibás tippek számának megfelelő galgás képet jeleníti meg. A képek a hangman0.png-től a hangman10.png-ig terjednek, és a hibás próbálkozások számától függően változnak.
 
 ```c#
 
