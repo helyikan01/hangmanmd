@@ -89,14 +89,14 @@ Működés: Az Akasztófa játékban a felhasználó egy szó betűit próbálja
 
 ```c#
 
-private void SzavakBetolteseFajlbol()
+private void LoadWordsFromFile()
 {
     try
     {
-        string fajlElérésiÚt = "szavak.txt";
-        if (File.Exists(fajlElérésiÚt))
+        string filePath = "szavak.txt";
+        if (File.Exists(filePath))
         {
-            szavak = File.ReadAllLines(fajlElérésiÚt);
+            words = File.ReadAllLines(filePath);
         }
         else
         {
@@ -117,22 +117,22 @@ private void SzavakBetolteseFajlbol()
 
 ```c#
 
-private void UjJatekotKezd()
+private void StartNewGame()
 {
-    if (szavak == null || szavak.Length == 0)
+    if (words == null || words.Length == 0)
     {
         MessageBox.Show("Nincsenek szavak");
         return;
     }
-    Random veletlen = new Random();
-    kivalasztottSzo = szavak[veletlen.Next(szavak.Length)];
-    tippeltBetuk = new string('_', kivalasztottSzo.Length).ToCharArray();
-    hibasTippek = 0;
-    MegjelenitesFrissites();
-    AkasztófaKépFrissites();
-    MindenBetuGombEngedelyezese();
+    Random random = new Random();
+    selectedWord = words[random.Next(words.Length)];
+    guessedLetters = new string('_', selectedWord.Length).ToCharArray();
+    incorrectGuesses = 0;
+    UpdateDisplay();
+    UpdateHangmanImage();
+    EnableAllLetterButtons();
     CongratsText.Text = "";
-    WrongGuessesText.Text = $"Rossz tippek: {hibasTippek}";
+    WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
 }
 
 ```
@@ -141,30 +141,30 @@ private void UjJatekotKezd()
 
 ```c#
 
-private void BetuGomb_Kattintas(object sender, RoutedEventArgs e)
+private void LetterButton_Click(object sender, RoutedEventArgs e)
 {
-    Button gomb = (Button)sender;
-    char tippeltChar = gomb.Content.ToString().ToLower()[0];
-    gomb.IsEnabled = false;
+    Button button = (Button)sender;
+    char guessedChar = button.Content.ToString().ToLower()[0];
+    button.IsEnabled = false;
 
-    if (kivalasztottSzo.Contains(tippeltChar))
+    if (selectedWord.Contains(guessedChar))
     {
-        for (int i = 0; i < kivalasztottSzo.Length; i++)
+        for (int i = 0; i < selectedWord.Length; i++)
         {
-            if (kivalasztottSzo[i] == tippeltChar)
+            if (selectedWord[i] == guessedChar)
             {
-                tippeltBetuk[i] = tippeltChar;
+                guessedLetters[i] = guessedChar;
             }
         }
     }
     else
     {
-        hibasTippek++;
-        WrongGuessesText.Text = $"Rossz tippek: {hibasTippek}";
-        AkasztófaKépFrissites();
+        incorrectGuesses++;
+        WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
+        UpdateHangmanImage();
     }
-    MegjelenitesFrissites();
-    JatekAllapotEllenőrzés();
+    UpdateDisplay();
+    CheckGameStatus();
 }
 
 ```
@@ -173,17 +173,17 @@ private void BetuGomb_Kattintas(object sender, RoutedEventArgs e)
 
 ```c#
 
-private void JatekAllapotEllenőrzés()
+private void CheckGameStatus()
 {
-    if (tippeltBetuk.SequenceEqual(kivalasztottSzo.ToCharArray()))
+    if (guessedLetters.SequenceEqual(selectedWord.ToCharArray()))
     {
         CongratsText.Text = "Gratulálok nyertél!";
-        MindenBetuGombLetiltasa();
+        DisableAllLetterButtons();
     }
-    else if (hibasTippek >= maxPróbálkozás)
+    else if (incorrectGuesses >= maxAttempts)
     {
-        CongratsText.Text = $"esztettél. A szó: {kivalasztottSzo}";
-        MindenBetuGombLetiltasa();
+        CongratsText.Text = $"Vesztettél. A szó: {selectedWord}";
+        DisableAllLetterButtons();
     }
 }
 
@@ -195,17 +195,17 @@ private void JatekAllapotEllenőrzés()
 
 ```c#
 
-private void AkasztófaKépFrissites()
+private void UpdateHangmanImage()
 {
-    string kepElérésiÚt = $"Images/hangman{hibasTippek}.png";
+    string imagePath = $"Images/hangman{incorrectGuesses}.png";
 
-    if (File.Exists(kepElérésiÚt))
+    if (File.Exists(imagePath))
     {
-        HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(kepElérésiÚt, UriKind.Relative));
+        HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath, UriKind.Relative));
     }
     else
     {
-        MessageBox.Show($"A kép nem található: {kepElérésiÚt}");
+        MessageBox.Show($"A kép nem található: {imagePath}");
     }
 }
 
@@ -215,13 +215,13 @@ private void AkasztófaKépFrissites()
 
 ```c#
 
-private void MindenBetuGombLetiltasa()
-{
-    foreach (var gomb in AlphabetPanel.Children.OfType<Button>())
-    {
-        gomb.IsEnabled = false;
-    }
-}
+ private void EnableAllLetterButtons()
+ {
+     foreach (var button in AlphabetPanel.Children.OfType<Button>())
+     {
+         button.IsEnabled = true;
+     }
+ }
 
 ```
 
@@ -240,26 +240,26 @@ namespace Akasztofa
 {
     public partial class MainWindow : Window
     {
-        private string[] szavak;
-        private string kivalasztottSzo;
-        private char[] tippeltBetuk;
-        private int hibasTippek;
-        private const int maxPróbálkozás = 11;
+        private string[] words;
+        private string selectedWord;
+        private char[] guessedLetters;
+        private int incorrectGuesses;
+        private const int maxAttempts = 11;
 
         public MainWindow()
         {
             InitializeComponent();
-            SzavakBetolteseFajlbol();
-            UjJatekotKezd();
+            LoadWordsFromFile();
+            StartNewGame();
         }
-        private void SzavakBetolteseFajlbol()
+        private void LoadWordsFromFile()
         {
             try
             {
-                string fajlElérésiÚt = "szavak.txt";
-                if (File.Exists(fajlElérésiÚt))
+                string filePath = "szavak.txt";
+                if (File.Exists(filePath))
                 {
-                    szavak = File.ReadAllLines(fajlElérésiÚt);
+                    words = File.ReadAllLines(filePath);
                 }
                 else
                 {
@@ -273,90 +273,90 @@ namespace Akasztofa
                 this.Close();
             }
         }
-        private void UjJatekotKezd()
+        private void StartNewGame()
         {
-            if (szavak == null || szavak.Length == 0)
+            if (words == null || words.Length == 0)
             {
                 MessageBox.Show("Nincsenek szavak");
                 return;
             }
-            Random veletlen = new Random();
-            kivalasztottSzo = szavak[veletlen.Next(szavak.Length)];
-            tippeltBetuk = new string('_', kivalasztottSzo.Length).ToCharArray();
-            hibasTippek = 0;
-            MegjelenitesFrissites();
-            AkasztófaKépFrissites();
-            MindenBetuGombEngedelyezese();
+            Random random = new Random();
+            selectedWord = words[random.Next(words.Length)];
+            guessedLetters = new string('_', selectedWord.Length).ToCharArray();
+            incorrectGuesses = 0;
+            UpdateDisplay();
+            UpdateHangmanImage();
+            EnableAllLetterButtons();
             CongratsText.Text = "";
-            WrongGuessesText.Text = $"Rossz tippek: {hibasTippek}";
+            WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
         }
-        private void MegjelenitesFrissites()
+        private void UpdateDisplay()
         {
-            WordDisplay.Text = string.Join(" ", tippeltBetuk);
+            WordDisplay.Text = string.Join(" ", guessedLetters);
         }
-        private void AkasztófaKépFrissites()
+        private void UpdateHangmanImage()
         {
-            string kepElérésiÚt = $"Images/hangman{hibasTippek}.png";
+            string imagePath = $"Images/hangman{incorrectGuesses}.png";
 
-            if (File.Exists(kepElérésiÚt))
+            if (File.Exists(imagePath))
             {
-                HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(kepElérésiÚt, UriKind.Relative));
+                HangmanImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(imagePath, UriKind.Relative));
             }
             else
             {
-                MessageBox.Show($"A kép nem található: {kepElérésiÚt}");
+                MessageBox.Show($"A kép nem található: {imagePath}");
             }
         }
-        private void MindenBetuGombEngedelyezese()
+        private void EnableAllLetterButtons()
         {
-            foreach (var gomb in AlphabetPanel.Children.OfType<Button>())
+            foreach (var button in AlphabetPanel.Children.OfType<Button>())
             {
-                gomb.IsEnabled = true;
+                button.IsEnabled = true;
             }
         }
-        private void BetuGomb_Kattintas(object sender, RoutedEventArgs e)
+        private void LetterButton_Click(object sender, RoutedEventArgs e)
         {
-            Button gomb = (Button)sender;
-            char tippeltChar = gomb.Content.ToString().ToLower()[0];
-            gomb.IsEnabled = false;
+            Button button = (Button)sender;
+            char guessedChar = button.Content.ToString().ToLower()[0];
+            button.IsEnabled = false;
 
-            if (kivalasztottSzo.Contains(tippeltChar))
+            if (selectedWord.Contains(guessedChar))
             {
-                for (int i = 0; i < kivalasztottSzo.Length; i++)
+                for (int i = 0; i < selectedWord.Length; i++)
                 {
-                    if (kivalasztottSzo[i] == tippeltChar)
+                    if (selectedWord[i] == guessedChar)
                     {
-                        tippeltBetuk[i] = tippeltChar;
+                        guessedLetters[i] = guessedChar;
                     }
                 }
             }
             else
             {
-                hibasTippek++;
-                WrongGuessesText.Text = $"Rossz tippek: {hibasTippek}";
-                AkasztófaKépFrissites();
+                incorrectGuesses++;
+                WrongGuessesText.Text = $"Rossz tippek: {incorrectGuesses}";
+                UpdateHangmanImage();
             }
-            MegjelenitesFrissites();
-            JatekAllapotEllenőrzés();
+            UpdateDisplay();
+            CheckGameStatus();
         }
-        private void JatekAllapotEllenőrzés()
+        private void CheckGameStatus()
         {
-            if (tippeltBetuk.SequenceEqual(kivalasztottSzo.ToCharArray()))
+            if (guessedLetters.SequenceEqual(selectedWord.ToCharArray()))
             {
                 CongratsText.Text = "Gratulálok nyertél!";
-                MindenBetuGombLetiltasa();
+                DisableAllLetterButtons();
             }
-            else if (hibasTippek >= maxPróbálkozás)
+            else if (incorrectGuesses >= maxAttempts)
             {
-                CongratsText.Text = $"esztettél. A szó: {kivalasztottSzo}";
-                MindenBetuGombLetiltasa();
+                CongratsText.Text = $"Vesztettél. A szó: {selectedWord}";
+                DisableAllLetterButtons();
             }
         }
-        private void MindenBetuGombLetiltasa()
+        private void DisableAllLetterButtons()
         {
-            foreach (var gomb in AlphabetPanel.Children.OfType<Button>())
+            foreach (var button in AlphabetPanel.Children.OfType<Button>())
             {
-                gomb.IsEnabled = false;
+                button.IsEnabled = false;
             }
         }
     }
